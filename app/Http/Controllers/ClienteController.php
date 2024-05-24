@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ClientRequest;
 use App\Models\Client;
 use Illuminate\Contracts\View\View;
 use Illuminate\Contracts\View\Factory;
@@ -16,7 +17,7 @@ class ClienteController extends Controller
      */
     public function index()
     {
-        $clientes = Client::get();
+        $clientes = Client::paginate(15);
         $clientes->load('projects');
 
         return view('clientes.index', [
@@ -37,15 +38,10 @@ class ClienteController extends Controller
     /**
      * Grava o cliente no banco de dados
      */
-    public function store(Request $request)
+    public function store(ClientRequest $request)
     {
-        $request->validate([
-            'nome' => ['required', 'min:3', 'max:100'],
-            'endereco' => ['required', 'max:200'],
-            'descricao' => ['required']
-        ]);
 
-        Client::create($request->except('_token'));
+        Client::create($request->all());
 
         // $novoCliente = new Client;
         // $novoCliente->nome = $request->input('nome');
@@ -53,6 +49,25 @@ class ClienteController extends Controller
         // $novoCliente->descricao = $request->input('descricao');
         // $novoCliente->save();
 
-        return redirect('/clientes');
+        return redirect('/clientes')->with(['sucesso' => 'Cliente cadastrado com sucesso!']);
+    }
+
+    public function edit(Client $cliente)
+    {
+        return view("clientes.edit",compact("cliente"));
+    }
+
+    public function update(ClientRequest $request, Client $cliente)
+    {
+        $cliente->update($request->all());
+
+        return redirect()->route('clientes.index')->with('sucesso', "Cliente $cliente->id editado com sucesso!");
+    }
+
+    public function destroy(int $id)
+    {
+        $cliente = Client::findOrFail($id);
+        $cliente->delete();
+        return redirect()->route('clientes.index')->with('sucesso', "Cliente $cliente->id excluído com sucesso!");
     }
 }

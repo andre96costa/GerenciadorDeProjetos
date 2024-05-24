@@ -1,6 +1,6 @@
-<x-layout titulo="Lista de Clientes">
+<x-layout titulo="Lista de Funcionarios">
     <div class="flex justify-end my-3">
-        <a class="bg-green-500 border rounded-md p-1 px-3 text-white" href="/clientes/create">Criar cliente</a>
+        <a class="bg-green-500 border rounded-md p-1 px-3 text-white" href="/funcionarios/create">Criar funcionario</a>
     </div>
 
     <div class="relative overflow-x-auto">
@@ -11,13 +11,10 @@
                         Nome
                     </th>
                     <th scope="col" class="px-6 py-3">
-                        Endereço
+                        Cpf
                     </th>
                     <th scope="col" class="px-6 py-3">
                         Descrição
-                    </th>
-                    <th scope="col" class="px-6 py-3">
-                        Projetos
                     </th>
                     <th scope="col" class="px-6 py-3">
                         Ações
@@ -25,35 +22,32 @@
                 </tr>
             </thead>
             <tbody>
-                @forelse ($clientes as $cliente)
+                @forelse ($funcionarios as $funcionario)
                     <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                         <th scope="row"
                             class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                            {{ $cliente->nome }}
+                            {{ $funcionario->nome }}
                         </th>
                         <td class="px-6 py-4">
-                            {{ $cliente->endereco }}
+                            {{ $funcionario->cpf }}
                         </td>
                         <td class="px-6 py-4">
-                            {{ $cliente->descricao }}
+                            {{ $funcionario->address->enderecoCompleto }}
                         </td>
                         <td class="px-6 py-4">
-                            @forelse ($cliente->projects as $projeto)
-                                @if ($loop->last)
-                                    {{ $projeto->nome }}
-                                @else
-                                    {{ $projeto->nome }}{{ ', ' }}
-                                @endif
-                            @empty
-                                Nenhum projeto
-                            @endforelse
-                        </td>
-                        <td class="px-6 py-4">
-                            <a class="bg-blue-500 border rounded-md p-1 px-3 text-white" href="{{ route('clientes.edit', $cliente) }}">Editar</a>
-                            <form class="inline-block" action="{{ route('clientes.destroy', $cliente->id) }}" method="POST">
+                            <a class="bg-blue-500 border rounded-md p-1 px-3 text-white" href="{{ route('funcionarios.edit', $funcionario) }}">Editar</a>
+                            <form class="inline-block" action="{{ route('funcionarios.destroy', $funcionario->id) }}" method="POST">
                                 @csrf
                                 @method('DELETE')
-                                <button class="bg-red-500 border rounded-md p-1 px-3 text-white" onclick="return confirm('Deseja excluir esse cliente?');">Excluir</button>
+                                <button class="bg-red-500 border rounded-md p-1 px-3 text-white" onclick="return confirm('Deseja excluir esse funcionario?');">Excluir</button>
+                            </form>
+
+                            <form class="inline-block" action="{{ route('funcionarios.demitir', $funcionario->id) }}" method="POST">
+                                @csrf
+                                @method('PATCH')
+                                <button class="bg-pink-500 border rounded-md p-1 px-3 text-white disabled:bg-gray-300" onclick="return confirm('Deseja demitir esse funcionario?')"
+                                {{ $funcionario->data_demissao ? 'disabled' : '' }}
+                                >Excluir</button>
                             </form>
                         </td>
                     </tr>
@@ -62,7 +56,7 @@
                         <td></td>
                         <td></td>
                         <th>
-                            Nenhum cliente cadastrado
+                            Nenhum funcionario cadastrado
                         </th>
                         <td></td>
                     </tr>
@@ -70,7 +64,7 @@
             </tbody>
         </table>
         <div class="my-4">
-            {{ $clientes->links() }}
+            {{ $funcionarios->links() }}
         </div>
     </div>
 </x-layout>

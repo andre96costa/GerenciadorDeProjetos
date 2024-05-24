@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -21,5 +23,12 @@ class Address extends Model
     public function employee()
     {
         return $this->belongsTo(Employee::class);
+    }
+
+    protected function enderecoCompleto(): Attribute
+    {
+        return Attribute::make(get: function(mixed $value, array $attributes){
+            return vsprintf('%s, %s - %s, %s - %s %s', [$attributes['logradouro'], $attributes['numero'], $attributes['bairro'], $attributes['estado'], $attributes['cep'], $attributes['complemento']]);
+        });
     }
 }

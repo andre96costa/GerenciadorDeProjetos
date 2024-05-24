@@ -1,6 +1,6 @@
-<x-layout titulo="Lista de Clientes">
+<x-layout titulo="Lista de Projetos">
     <div class="flex justify-end my-3">
-        <a class="bg-green-500 border rounded-md p-1 px-3 text-white" href="/clientes/create">Criar cliente</a>
+        <a class="bg-green-500 border rounded-md p-1 px-3 text-white" href="{{ route('projetos.create') }}">Criar Projetos</a>
     </div>
 
     <div class="relative overflow-x-auto">
@@ -11,50 +11,53 @@
                         Nome
                     </th>
                     <th scope="col" class="px-6 py-3">
-                        Endereço
+                        Orçamento
                     </th>
                     <th scope="col" class="px-6 py-3">
-                        Descrição
+                        Data inicio
                     </th>
                     <th scope="col" class="px-6 py-3">
-                        Projetos
+                        Data fim
                     </th>
                     <th scope="col" class="px-6 py-3">
+                        Cliente
+                    </th>
+                    <th>
                         Ações
                     </th>
                 </tr>
             </thead>
             <tbody>
-                @forelse ($clientes as $cliente)
+                @forelse ($projetos as $projeto)
                     <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                         <th scope="row"
                             class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                            {{ $cliente->nome }}
+                            {{ $projeto->nome }}
                         </th>
                         <td class="px-6 py-4">
-                            {{ $cliente->endereco }}
+                            {{ $projeto->orcamento }}
                         </td>
                         <td class="px-6 py-4">
-                            {{ $cliente->descricao }}
+                            {{ $projeto->data_inicio }}
                         </td>
                         <td class="px-6 py-4">
-                            @forelse ($cliente->projects as $projeto)
-                                @if ($loop->last)
-                                    {{ $projeto->nome }}
-                                @else
-                                    {{ $projeto->nome }}{{ ', ' }}
-                                @endif
-                            @empty
-                                Nenhum projeto
-                            @endforelse
+                            {{ $projeto->data_final }}
                         </td>
                         <td class="px-6 py-4">
-                            <a class="bg-blue-500 border rounded-md p-1 px-3 text-white" href="{{ route('clientes.edit', $cliente) }}">Editar</a>
-                            <form class="inline-block" action="{{ route('clientes.destroy', $cliente->id) }}" method="POST">
+                            @if ($projeto->client)
+                                {{ $projeto->client->nome }}
+                            @else
+                                Nenhum cliente
+                            @endif
+                        </td>
+                        <td class="px-6 py-4">
+                            <a class="bg-blue-500 border rounded-md p-1 px-3 text-white" href="{{ route('projetos.edit', $projeto) }}">Editar</a>
+                            <form class="inline-block" action="{{ route('projetos.destroy', $projeto) }}" method="POST">
                                 @csrf
                                 @method('DELETE')
-                                <button class="bg-red-500 border rounded-md p-1 px-3 text-white" onclick="return confirm('Deseja excluir esse cliente?');">Excluir</button>
+                                <button class="bg-red-500 border rounded-md p-1 px-3 text-white" onclick="return confirm('Deseja excluir esse projeto?');">Excluir</button>
                             </form>
+                            <a class="bg-pink-500 border rounded-md p-1 px-3 text-white" href="{{ route('projetos.show', $projeto) }}">Visualizar</a>
                         </td>
                     </tr>
                 @empty
@@ -70,7 +73,7 @@
             </tbody>
         </table>
         <div class="my-4">
-            {{ $clientes->links() }}
+            {{ $projetos->links() }}
         </div>
     </div>
 </x-layout>
